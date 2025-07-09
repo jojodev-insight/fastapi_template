@@ -1,11 +1,12 @@
+from contextlib import asynccontextmanager
+
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-import uvicorn
 
+from app.api.v1 import auth, items, users
 from app.core.config import settings
 from app.core.database import create_tables
-from app.api.v1 import users, items, auth
 
 
 @asynccontextmanager

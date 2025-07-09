@@ -1,11 +1,12 @@
+from datetime import timedelta
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import timedelta
 
+from app.core.config import settings
 from app.core.database import get_db
 from app.core.security import create_access_token, verify_token
-from app.core.config import settings
 from app.repositories import UserRepository
 from app.schemas import Token, UserLogin
 
@@ -21,16 +22,16 @@ async def get_current_user(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    
+
     username = verify_token(token)
     if username is None:
         raise credentials_exception
-    
+
     user_repo = UserRepository(db)
     user = await user_repo.get_by_username(username=username)
     if user is None:
         raise credentials_exception
-    
+
     return user
 
 

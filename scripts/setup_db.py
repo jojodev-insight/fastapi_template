@@ -3,9 +3,6 @@ Database setup script for different database types.
 This script helps you set up the database configuration for SQLite, PostgreSQL, or MySQL.
 """
 
-import os
-import shutil
-from pathlib import Path
 
 
 def setup_sqlite():
@@ -30,10 +27,10 @@ ALLOWED_ORIGINS=["http://localhost:3000", "http://localhost:8080"]
 ALLOWED_METHODS=["*"]
 ALLOWED_HEADERS=["*"]
 """
-    
+
     with open(".env", "w") as f:
         f.write(env_content)
-    
+
     print("✅ SQLite configuration created in .env file")
     print("📝 SQLite database will be created automatically when you run the app")
 
@@ -60,10 +57,10 @@ ALLOWED_ORIGINS=["http://localhost:3000", "http://localhost:8080"]
 ALLOWED_METHODS=["*"]
 ALLOWED_HEADERS=["*"]
 """
-    
+
     with open(".env", "w") as f:
         f.write(env_content)
-    
+
     print("✅ PostgreSQL configuration created in .env file")
     print("🐳 To start PostgreSQL with Docker:")
     print("   docker-compose up postgres")
@@ -95,10 +92,10 @@ ALLOWED_ORIGINS=["http://localhost:3000", "http://localhost:8080"]
 ALLOWED_METHODS=["*"]
 ALLOWED_HEADERS=["*"]
 """
-    
+
     with open(".env", "w") as f:
         f.write(env_content)
-    
+
     print("✅ MySQL configuration created in .env file")
     print("🐳 To start MySQL with Docker:")
     print("   docker-compose up mysql")
@@ -118,10 +115,10 @@ def main():
     print("2. PostgreSQL")
     print("3. MySQL")
     print()
-    
+
     while True:
         choice = input("Enter your choice (1-3): ").strip()
-        
+
         if choice == "1":
             setup_sqlite()
             break
@@ -133,7 +130,7 @@ def main():
             break
         else:
             print("❌ Invalid choice. Please enter 1, 2, or 3.")
-    
+
     print()
     print("🎯 Next steps:")
     print("1. Install dependencies: uv sync --dev")

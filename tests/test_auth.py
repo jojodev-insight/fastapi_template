@@ -11,7 +11,7 @@ async def test_login_success(client: AsyncClient, test_user):
     }
     response = await client.post("/api/v1/auth/login", json=login_data)
     assert response.status_code == 200
-    
+
     data = response.json()
     assert "access_token" in data
     assert data["token_type"] == "bearer"
@@ -38,7 +38,7 @@ async def test_token_endpoint(client: AsyncClient, test_user):
     }
     response = await client.post("/api/v1/auth/token", data=form_data)
     assert response.status_code == 200
-    
+
     data = response.json()
     assert "access_token" in data
     assert data["token_type"] == "bearer"

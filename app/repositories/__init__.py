@@ -1,11 +1,12 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
-from typing import Optional, List
+from typing import List, Optional
 
-from app.models import User, Item
-from app.schemas import UserCreate, UserUpdate, ItemCreate, ItemUpdate
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from app.core.security import get_password_hash, verify_password
+from app.models import Item, User
+from app.schemas import ItemCreate, ItemUpdate, UserCreate, UserUpdate
 
 
 class UserRepository:
@@ -46,7 +47,7 @@ class UserRepository:
         else:
             # Handle dict input (for tests and direct creation)
             db_user = User(**user_data)
-        
+
         self.db.add(db_user)
         await self.db.commit()
         await self.db.refresh(db_user)

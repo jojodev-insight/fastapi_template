@@ -1,13 +1,11 @@
 import pytest
 from httpx import AsyncClient
-from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.core.database import Base, get_db
 from app.main import app
-from app.core.database import get_db, Base
 from app.repositories import UserRepository
-from app.schemas import UserCreate
 
 # Test database URL
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
@@ -64,14 +62,15 @@ async def client(setup_database):
 @pytest.fixture
 async def test_user(db_session: AsyncSession):
     """Create a test user."""
-    from app.core.security import get_password_hash
     import uuid
-    
+
+    from app.core.security import get_password_hash
+
     user_repo = UserRepository(db_session)
-    
+
     # Use unique username to avoid conflicts
     unique_id = str(uuid.uuid4())[:8]
-    
+
     # Create user data with hashed password directly
     hashed_password = get_password_hash("testpassword123")
     user_data = {
@@ -82,7 +81,7 @@ async def test_user(db_session: AsyncSession):
         "is_active": True,
         "is_superuser": False
     }
-    
+
     user = await user_repo.create(user_data)
     # Store the password for later use in tests
     user._test_password = "testpassword123"

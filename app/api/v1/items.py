@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List, Optional
 
-from app.core.database import get_db
-from app.repositories import ItemRepository
-from app.schemas import Item, ItemCreate, ItemUpdate, ItemResponse
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.api.v1.auth import get_current_user
+from app.core.database import get_db
 from app.models import User as UserModel
+from app.repositories import ItemRepository
+from app.schemas import ItemCreate, ItemResponse, ItemUpdate
 
 router = APIRouter()
 
@@ -70,18 +71,18 @@ async def update_item(
 ):
     """Update an item (only the owner can update)."""
     item_repo = ItemRepository(db)
-    
+
     # Check if item exists and user owns it
     db_item = await item_repo.get_by_id(item_id=item_id)
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
-    
+
     if db_item.owner_id != current_user.id and not current_user.is_superuser:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not enough permissions"
         )
-    
+
     updated_item = await item_repo.update(item_id=item_id, item_update=item_update)
     return updated_item
 
@@ -94,18 +95,18 @@ async def delete_item(
 ):
     """Delete an item (only the owner can delete)."""
     item_repo = ItemRepository(db)
-    
+
     # Check if item exists and user owns it
     db_item = await item_repo.get_by_id(item_id=item_id)
     if db_item is None:
         raise HTTPException(status_code=404, detail="Item not found")
-    
+
     if db_item.owner_id != current_user.id and not current_user.is_superuser:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not enough permissions"
         )
-    
+
     success = await item_repo.delete(item_id=item_id)
     if not success:
         raise HTTPException(status_code=404, detail="Item not found")

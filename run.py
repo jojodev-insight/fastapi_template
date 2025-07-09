@@ -5,7 +5,7 @@ Use this script to run the FastAPI application with uv.
 """
 
 import uvicorn
-from app.main import app
+
 from app.core.config import settings
 
 if __name__ == "__main__":

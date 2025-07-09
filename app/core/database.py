@@ -1,9 +1,10 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from collections.abc import AsyncGenerator
+
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
-from typing import AsyncGenerator
 
 from app.core.config import settings
+
 
 # Create database URL based on type
 def get_database_url() -> str:

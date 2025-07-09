@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
-from app.core.database import get_db
-from app.repositories import UserRepository
-from app.schemas import User, UserCreate, UserUpdate, UserResponse
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.api.v1.auth import get_current_user
+from app.core.database import get_db
 from app.models import User as UserModel
+from app.repositories import UserRepository
+from app.schemas import UserCreate, UserResponse, UserUpdate
 
 router = APIRouter()
 
@@ -28,7 +29,7 @@ async def read_users(
 async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
     """Create a new user."""
     user_repo = UserRepository(db)
-    
+
     # Check if user already exists
     db_user = await user_repo.get_by_username(username=user.username)
     if db_user:
@@ -36,14 +37,14 @@ async def create_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
             status_code=400,
             detail="Username already registered"
         )
-    
+
     db_user = await user_repo.get_by_email(email=user.email)
     if db_user:
         raise HTTPException(
             status_code=400,
             detail="Email already registered"
         )
-    
+
     return await user_repo.create(user)
 
 
@@ -80,7 +81,7 @@ async def update_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not enough permissions"
         )
-    
+
     user_repo = UserRepository(db)
     db_user = await user_repo.update(user_id=user_id, user_update=user_update)
     if db_user is None:
@@ -100,7 +101,7 @@ async def delete_user(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not enough permissions"
         )
-    
+
     user_repo = UserRepository(db)
     success = await user_repo.delete(user_id=user_id)
     if not success:

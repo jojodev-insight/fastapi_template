@@ -12,7 +12,7 @@ async def test_create_item(client: AsyncClient, auth_headers):
     }
     response = await client.post("/api/v1/items/", json=item_data, headers=auth_headers)
     assert response.status_code == 201
-    
+
     data = response.json()
     assert data["title"] == item_data["title"]
     assert data["description"] == item_data["description"]
@@ -27,7 +27,7 @@ async def test_get_items(client: AsyncClient):
     """Test getting all items (public endpoint)."""
     response = await client.get("/api/v1/items/")
     assert response.status_code == 200
-    
+
     data = response.json()
     assert isinstance(data, list)
 
@@ -43,11 +43,11 @@ async def test_get_my_items(client: AsyncClient, auth_headers):
     }
     create_response = await client.post("/api/v1/items/", json=item_data, headers=auth_headers)
     assert create_response.status_code == 201
-    
+
     # Then get user's items
     response = await client.get("/api/v1/items/my-items", headers=auth_headers)
     assert response.status_code == 200
-    
+
     data = response.json()
     assert isinstance(data, list)
     assert len(data) >= 1
@@ -66,11 +66,11 @@ async def test_get_item_by_id(client: AsyncClient, auth_headers):
     create_response = await client.post("/api/v1/items/", json=item_data, headers=auth_headers)
     assert create_response.status_code == 201
     item_id = create_response.json()["id"]
-    
+
     # Then get the item
     response = await client.get(f"/api/v1/items/{item_id}")
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["id"] == item_id
     assert data["title"] == item_data["title"]
@@ -88,7 +88,7 @@ async def test_update_item(client: AsyncClient, auth_headers):
     create_response = await client.post("/api/v1/items/", json=item_data, headers=auth_headers)
     assert create_response.status_code == 201
     item_id = create_response.json()["id"]
-    
+
     # Then update the item
     update_data = {
         "title": "Updated Title",
@@ -96,7 +96,7 @@ async def test_update_item(client: AsyncClient, auth_headers):
     }
     response = await client.put(f"/api/v1/items/{item_id}", json=update_data, headers=auth_headers)
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["title"] == update_data["title"]
     assert data["price"] == update_data["price"]
@@ -115,12 +115,12 @@ async def test_delete_item(client: AsyncClient, auth_headers):
     create_response = await client.post("/api/v1/items/", json=item_data, headers=auth_headers)
     assert create_response.status_code == 201
     item_id = create_response.json()["id"]
-    
+
     # Then delete the item
     response = await client.delete(f"/api/v1/items/{item_id}", headers=auth_headers)
     assert response.status_code == 200
     assert "deleted successfully" in response.json()["message"]
-    
+
     # Verify item is deleted
     get_response = await client.get(f"/api/v1/items/{item_id}")
     assert get_response.status_code == 404

@@ -13,7 +13,7 @@ async def test_create_user(client: AsyncClient):
     }
     response = await client.post("/api/v1/users/", json=user_data)
     assert response.status_code == 201
-    
+
     data = response.json()
     assert data["username"] == user_data["username"]
     assert data["email"] == user_data["email"]
@@ -40,7 +40,7 @@ async def test_get_users(client: AsyncClient, auth_headers):
     """Test getting all users (requires authentication)."""
     response = await client.get("/api/v1/users/", headers=auth_headers)
     assert response.status_code == 200
-    
+
     data = response.json()
     assert isinstance(data, list)
     assert len(data) >= 1
@@ -51,7 +51,7 @@ async def test_get_current_user(client: AsyncClient, auth_headers, test_user):
     """Test getting current user information."""
     response = await client.get("/api/v1/users/me", headers=auth_headers)
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["username"] == test_user.username
     assert data["email"] == test_user.email
@@ -62,7 +62,7 @@ async def test_get_user_by_id(client: AsyncClient, auth_headers, test_user):
     """Test getting user by ID."""
     response = await client.get(f"/api/v1/users/{test_user.id}", headers=auth_headers)
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["id"] == test_user.id
     assert data["username"] == test_user.username
@@ -75,12 +75,12 @@ async def test_update_user(client: AsyncClient, auth_headers, test_user):
         "full_name": "Updated Name",
     }
     response = await client.put(
-        f"/api/v1/users/{test_user.id}", 
-        json=update_data, 
+        f"/api/v1/users/{test_user.id}",
+        json=update_data,
         headers=auth_headers
     )
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["full_name"] == update_data["full_name"]
 
