@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: fastapi_db
+      POSTGRES_USER: fastapi_user
+      POSTGRES_PASSWORD: fastapi_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fastapi_network
+
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: fastapi_db
+      MYSQL_USER: fastapi_user
+      MYSQL_PASSWORD: fastapi_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - fastapi_network
+
+  # Redis (for caching/sessions if needed)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - fastapi_network
+
+  # FastAPI Application
+  fastapi:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_TYPE=postgresql
+      - DATABASE_URL=postgresql+asyncpg://fastapi_user:fastapi_password@postgres:5432/fastapi_db
+    depends_on:
+      - postgres
+    networks:
+      - fastapi_network
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:
+  mysql_data:
+
+networks:
+  fastapi_network:
+    driver: bridge
